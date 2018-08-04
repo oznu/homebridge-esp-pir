@@ -6,7 +6,7 @@
     "type": "object",
     "properties": {
       "noMotionDelay": {
-        "title": "Name",
+        "title": "Motion Delay (ms)",
         "type": "number",
         "default": 30000,
         "required": true
