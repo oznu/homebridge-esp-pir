@@ -1,6 +1,6 @@
 {
-  "name": "homebridge-esp8266-pir",
-  "version": "1.0.0",
+  "name": "homebridge-esp-pir",
+  "version": "1.0.1",
   "description": "A Homebridge plugin and ESP8266 Arduino sketch for a PIR sensor.",
   "main": "dist/index.js",
   "scripts": {
@@ -22,9 +22,9 @@
   "author": "oznu <dev@oz.nu>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/oznu/homebridge-esp8266-pir/issues"
+    "url": "https://github.com/oznu/homebridge-esp-pir/issues"
   },
-  "homepage": "https://github.com/oznu/homebridge-esp8266-pir#readme",
+  "homepage": "https://github.com/oznu/homebridge-esp-pir#readme",
   "dependencies": {
     "@oznu/ws-connect": "0.0.4",
     "bonjour": "^3.5.0",

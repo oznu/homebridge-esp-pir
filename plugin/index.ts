@@ -11,7 +11,7 @@ export = (homebridge) => {
   Characteristic = homebridge.hap.Characteristic;
   UUIDGen = homebridge.hap.uuid;
 
-  homebridge.registerPlatform('homebridge-esp8266-pir', 'homebridge-esp8266-pir', PirPlatform, true);
+  homebridge.registerPlatform('homebridge-esp-pir', 'homebridge-esp-pir', PirPlatform, true);
 };
 
 class PirPlatform {
@@ -60,7 +60,7 @@ class PirPlatform {
         this.log(`Found new PIR Sensor at ${service.host}:${service.port} [${service.txt.mac}]`);
         this.accessories[UUID] = new Accessory(service.txt.mac.replace(/:/g, ''), UUID);
         this.startAccessory(this.accessories[UUID], accessoryConfig);
-        this.api.registerPlatformAccessories('homebridge-esp8266-pir', 'homebridge-esp8266-pir', [this.accessories[UUID]]);
+        this.api.registerPlatformAccessories('homebridge-esp-pir', 'homebridge-esp-pir', [this.accessories[UUID]]);
       } else {
         // Existing Accessory
         this.log(`Found existing PIR Sensor at ${service.host}:${service.port} [${service.txt.mac}]`);
@@ -81,7 +81,7 @@ class PirPlatform {
     // Thermostat Accessory Information
     accessory.getService(Service.AccessoryInformation)
       .setCharacteristic(Characteristic.Manufacturer, 'oznu-platform')
-      .setCharacteristic(Characteristic.Model, 'homebridge-esp8266-pir')
+      .setCharacteristic(Characteristic.Model, 'homebridge-esp-pir')
       .setCharacteristic(Characteristic.SerialNumber, config.serial);
 
     // Thermostat Characteristic Handlers

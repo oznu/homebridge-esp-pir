@@ -1,7 +1,7 @@
 {
-  "pluginAlias": "homebridge-esp8266-pir",
+  "pluginAlias": "homebridge-esp-pir",
   "pluginType": "platform",
-  "footerDisplay": "This plugin works with an Arduino sketch which is available [here](https://github.com/oznu/homebridge-esp8266-fan/blob/master/sketch/sketch.ino).",
+  "footerDisplay": "This plugin works with an Arduino sketch which is available [here](https://github.com/oznu/homebridge-esp-pir/blob/master/sketch/sketch.ino).",
   "schema": {
     "type": "object",
     "properties": {
