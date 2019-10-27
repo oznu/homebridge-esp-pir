@@ -9,10 +9,6 @@
 
 WebSocketsServer webSocket = WebSocketsServer(81);
 
-// Replace with your network credentials
-const char* ssid = "xxxx";
-const char* password = "xxxx";
-
 // Hostname
 const char* accessoryName = "homebridge-pir";
 
@@ -148,12 +144,6 @@ void setup(void) {
   }
 
   WiFi.hostname(accessoryName);
-
-  Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(ssid);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
 
   // declare sensor as input
   pinMode(inputPin, INPUT);    

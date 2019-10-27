@@ -1,11 +1,12 @@
 {
   "name": "homebridge-esp-pir",
-  "version": "1.0.2",
+  "displayName": "ESP PIR Motion Sensor",
+  "version": "1.1.0",
   "description": "A Homebridge plugin and ESP8266 Arduino sketch for a PIR sensor.",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "watch": "tsc --watch",
+    "watch": "nodemon",
     "prepublishOnly": "npm i --package-lock-only && npm audit && npm run build"
   },
   "repository": {
@@ -16,8 +17,8 @@
     "homebridge-plugin"
   ],
   "engines": {
-    "homebridge": ">=0.4.30",
-    "node": ">=6.9.1"
+    "homebridge": ">=0.4.40",
+    "node": ">=10.16.3"
   },
   "author": "oznu <dev@oz.nu>",
   "license": "MIT",
@@ -26,15 +27,16 @@
   },
   "homepage": "https://github.com/oznu/homebridge-esp-pir#readme",
   "dependencies": {
-    "@oznu/ws-connect": "0.0.4",
+    "@oznu/ws-connect": "^1.0.0",
     "bonjour": "^3.5.0",
     "inflection": "^1.12.0",
     "mdns-resolver": "0.0.3"
   },
   "devDependencies": {
-    "@types/node": "^10.5.6",
-    "@types/ws": "^5.1.2",
-    "tslint": "^5.11.0",
-    "typescript": "^3.0.1"
+    "@types/node": "^12.11.7",
+    "@types/ws": "^6.0.3",
+    "nodemon": "^1.19.4",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.4"
   }
 }

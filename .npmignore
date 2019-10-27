@@ -5,6 +5,9 @@ screenshots
 tsconfig.json
 tslint.json
 yarn.lock
+.arduino-output
+.vscode
+nodemon.json
 
 # Logs
 logs

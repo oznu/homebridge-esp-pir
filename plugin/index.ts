@@ -23,7 +23,7 @@ class PirPlatform {
   constructor(log, config, api) {
     this.api = api;
     this.log = log;
-    this.config = config;
+    this.config = config || {};
     this.accessories = {};
 
     const bonjour = Bonjour();
@@ -52,7 +52,7 @@ class PirPlatform {
         port: service.port,
         name: service.name,
         serial: service.txt.mac,
-        noMotionDelay: this.config.noMotionDelay
+        noMotionDelay: this.config.noMotionDelay || 30000,
       };
 
       if (!this.accessories[UUID]) {
