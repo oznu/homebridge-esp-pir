@@ -60,3 +60,4 @@ yarn.lock
 .DS_Store
 
 .arduino-output
+.vscode/c_cpp_properties.json
