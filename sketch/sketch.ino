@@ -1,9 +1,14 @@
-
+#if defined(ESP8266)
 #include <ESP8266WiFi.h>
-#include <DNSServer.h>              // Local DNS Server used for redirecting all requests to the configuration portal
-#include <ESP8266WebServer.h>       // Local WebServer used to serve the configuration portal
-#include <WiFiManager.h>            // https://github.com/tzapu/WiFiManager WiFi Configuration Magic
 #include <ESP8266mDNS.h>
+#else
+#include <WiFi.h>
+#include <ESPmDNS.h>
+#endif
+
+#include <DNSServer.h>
+#include <WebServer.h>
+#include <WiFiManager.h>
 #include <WebSocketsServer.h>
 #include <ArduinoJson.h>
 
@@ -12,8 +17,11 @@ WebSocketsServer webSocket = WebSocketsServer(81);
 // Hostname
 const char* accessoryName = "homebridge-pir";
 
-// choose the input pin (for PIR sensor)
 int inputPin = 0;
+
+#if defined(ESP32)
+int inputPin = 19;
+#endif
 
 int noMotionDelay = 30000;
 
@@ -25,43 +33,49 @@ unsigned long currentMillis;
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   switch(type) {
     case WStype_DISCONNECTED:
-      Serial.printf("[%u] Disconnected!\r\n", num);
+      Serial.printf("[%u] Disconnected!\n", num);
       break;
     case WStype_CONNECTED:
-      Serial.printf("[%u] Connected from url: %s\r\n", num, payload);
+      Serial.printf("[%u] Connected from url: %s\n", num, payload);
       sendUpdate();
       break;
     case WStype_TEXT: {
-      Serial.printf("[%u] get Text: %s\r\n", num, payload);
+      Serial.printf("[%u] get Text: %s\n", num, payload);
 
-      DynamicJsonBuffer jsonBuffer;
-      JsonObject& root = jsonBuffer.parseObject((char *)&payload[0]);
+      DynamicJsonDocument jsonBuffer(1024);
+      DeserializationError error = deserializeJson(jsonBuffer, (char *)&payload[0]);
+      if (error) {
+        Serial.print(F("deserializeJson() failed: "));
+        Serial.println(error.f_str());
+        return;
+      }
+      JsonObject root = jsonBuffer.as<JsonObject>();
 
       if (root.containsKey("noMotionDelay")) {
         noMotionDelay = root["noMotionDelay"];
-        Serial.printf("Set no motion delay to %u\r\n", noMotionDelay);
+        Serial.printf("Set no motion delay to %u\n", noMotionDelay);
       }
 
       break;
     }
     case WStype_BIN:
-      Serial.printf("[%u] get binary length: %u\r\n", num, length);
+      Serial.printf("[%u] get binary length: %u\n", num, length);
       break;
     case WStype_PING:
-      // Serial.printf("[%u] Got Ping!\r\n", num);
+      Serial.printf("[%u] Got Ping!\n", num);
       break;
     case WStype_PONG:
-      // Serial.printf("[%u] Got Pong!\r\n", num);
+      Serial.printf("[%u] Got Pong!\n", num);
       break;
     default:
-      Serial.printf("Invalid WStype [%d]\r\n", type);
+      Serial.printf("Invalid WStype [%d]\n", type);
       break;
   }
 }
 
 void sendUpdate() {
-  DynamicJsonBuffer jsonBuffer;
-  JsonObject& root = jsonBuffer.createObject();
+  DynamicJsonDocument jsonBuffer(1024);
+  JsonObject root = jsonBuffer.to<JsonObject>();
 
   if (pirState == HIGH) {
     root["motion"] = true;
@@ -70,7 +84,7 @@ void sendUpdate() {
   }
 
   String res;
-  root.printTo(res);
+  serializeJson(root, res);
 
   Serial.println(res);
 
@@ -118,10 +132,11 @@ void setup(void) {
 
   delay(1000);
 
-  Serial.begin(115200, SERIAL_8N1, SERIAL_TX_ONLY);
+  Serial.begin(115200);
 
+  #if defined(ESP8266)
   WiFi.mode(WIFI_STA);
-  WiFi.hostname(accessoryName);
+  #endif
 
   Serial.println("");
 
@@ -132,25 +147,29 @@ void setup(void) {
   wm.setTimeout(600);
 
   // Wait for connection
-  // first parameter is name of access point, second is the password
   if (!wm.autoConnect(accessoryName, "password"))
   {
     Serial.println("Failed to connect and hit timeout");
     delay(3000);
 
     // reset and try again
-    ESP.reset();
+    ESP.restart();
     delay(5000);
   }
 
+  #if defined(ESP8266)
   WiFi.hostname(accessoryName);
+  #endif
+
+  if (!MDNS.begin(accessoryName)) {
+    Serial.println("Error starting mDNS");
+    return;
+  }
 
   // declare sensor as input
   pinMode(inputPin, INPUT);    
 
-  if (MDNS.begin(accessoryName, WiFi.localIP())) {
-    Serial.println("MDNS responder started");
-  }
+  Serial.println("MDNS responder started");
 
   webSocket.begin();
   webSocket.onEvent(webSocketEvent);
@@ -170,5 +189,7 @@ void setup(void) {
 void loop(void) {
   webSocket.loop();
   checkForMotion();
+  #if defined(ESP8266)
   MDNS.update();
+  #endif
 }
